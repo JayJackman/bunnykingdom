@@ -1,7 +1,7 @@
 import { Color } from "./Utils"
 import { Resource, resourceToString } from "./Resource"
 
-enum BuildingType
+export enum BuildingType
 {
     None,
 
@@ -35,5 +35,3 @@ export function buildingToString(building: Building): string
         case BuildingType.SkyTower: return `Sky Tower (${building.color})`
     }
 }
-
-export { BuildingType }
