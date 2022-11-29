@@ -1,8 +1,11 @@
 import Head from 'next/head'
 import Image from 'next/image'
 import styles from '../styles/Home.module.css'
+import { Gameboard } from '../game/Gameboard'
+import { UIGameboard } from '../ui/UIGameboard'
 
 export default function Home() {
+  let gameboard: Gameboard = new Gameboard()
   return (
     <div className={styles.container}>
       <Head>
@@ -11,10 +14,12 @@ export default function Home() {
         <link rel="icon" href="/favicon.ico" />
       </Head>
 
+
       <main className={styles.main}>
         <h1 className={styles.title}>
           Welcome to <a href="https://nextjs.org">Next.js!</a>
         </h1>
+        <UIGameboard board={gameboard} />
 
         <p className={styles.description}>
           Get started by editing{' '}
