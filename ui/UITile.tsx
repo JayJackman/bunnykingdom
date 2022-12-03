@@ -5,7 +5,7 @@ import { BuildingType } from '../game/Building';
 import { Gameboard } from "../game/Gameboard";
 import { Resource, resourceToChar } from '../game/Resource';
 import { Tile, TileType } from "../game/Tile";
-import { Color, PlayerColors, ResourceColors, TileColors } from '../game/dictionaries/Colors'
+import { CampColor, Color, PlayerColors, ResourceColors, TileColors } from '../game/dictionaries/Colors'
 import { parseConfigFileTextToJson } from 'typescript';
 
 interface TileProps
@@ -205,6 +205,14 @@ export class UITile extends React.Component<TileProps, TileState>
       }
       case BuildingType.Camp:
       {
+        context.fillStyle = CampColor
+        context.moveTo(10,50)
+        context.lineTo(50,10)
+        context.lineTo(90,50)
+        context.lineTo(50,90)
+        context.closePath()
+        context.stroke()
+        context.fill()
         break;
       }
     }

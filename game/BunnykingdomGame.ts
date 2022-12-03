@@ -30,6 +30,18 @@ export class BunnyKingdomGame
     // }
 
     /**
+     * Handle a command to add a new player to the game
+     * @param name The name of the new player
+     * @param color The color of the new player
+     */
+    handleAddPlayer(name: string, color: PlayerColors)
+    {
+        /** TODO: Check to make sure the game hasnt started yet */
+        if (this.players.length > MAX_PLAYERS) throw new Error("Adding too many players!")
+        this.players.push(new Player(name, color))
+    }
+
+    /**
      * Handle a select card event from a player.
      * @param id The unique ID of the player playing the card
      * @param card A Card object indicating the card being played
@@ -108,7 +120,7 @@ export class BunnyKingdomGame
             ||  (building.resource === Resource.Gold && tile.terrainType !== TileType.Mountain)
             ||  (building.resource === Resource.Diamond && tile.terrainType !== TileType.Mountain)
                )
-               throw new Error(`Cannot place ${resourceToString} on ${tileTypeToString(tile.terrainType)}`)
+               throw new Error(`Cannot place ${resourceToString(building.resource)} on ${tileTypeToString(tile.terrainType)}`)
         }
 
         /** Do an extra check for Sky Tower's second position */
@@ -126,6 +138,12 @@ export class BunnyKingdomGame
         }
         else
         {
+            /** Need to place a bunny for camp */
+            if (building.type == BuildingType.Camp)
+            {
+                this.gameboard.placeBunny({row, col}, player)
+            }
+
             /** We can now safely place the building */
             this.gameboard.placeBuilding(building, {row, col})
         }

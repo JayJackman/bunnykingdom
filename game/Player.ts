@@ -29,8 +29,19 @@ export class Player
 
     hasCardInHand(card: Card): boolean
     {
-        if (this.hand.indexOf(card) === -1) return false
-        return true
+        if (this.indexOf(card) >= 0) return true
+        return false
+    }
+
+    private indexOf(card: Card): number
+    {
+        let i = 0
+        for (let handCard of this.hand)
+        {
+            if (handCard.name === card.name) return i
+            i++
+        }
+        return -1
     }
 
     hasBuildingAvailable(building: Building): boolean
@@ -44,15 +55,15 @@ export class Player
 
     playCard(card: Card, fromProvisions: boolean = false): boolean
     {
-        let index = this.hand.indexOf(card)
+        let index = this.indexOf(card)
         if (fromProvisions)
         {
-            /** Don't do anything here. We don't delete a card from our hand and we don't throw an error */
+            /** Don't do anything here. We don't remove a card from our hand and we don't throw an error */
         }
         else if (index >= 0)
         {
-            /** Delete the card from the hand because we have played it */
-            delete this.hand[index]
+            /** Remove the card from the hand because we have played it */
+            this.hand.splice(index, 1)
         }
         else
         {

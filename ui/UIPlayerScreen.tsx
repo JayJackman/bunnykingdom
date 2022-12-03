@@ -1,6 +1,7 @@
 import React from "react";
 import { useState, useRef } from "react";
 import { Gameboard } from "../game/Gameboard";
+import { UIGameboard } from "./UIGameboard";
 
 
 interface GameProps
@@ -13,7 +14,7 @@ interface GameState
     gameboard: Gameboard
 }
 
-export class UITile extends React.Component<GameProps, GameState>
+export class UIPlayerScreen extends React.Component<GameProps, GameState>
 {
     constructor(props: GameProps)
     {
@@ -21,8 +22,8 @@ export class UITile extends React.Component<GameProps, GameState>
         this.state = { gameboard: props.gameboard }
     }
 
-    componentDidMount(): void
+    render()
     {
-
+        return <UIGameboard board={this.state.gameboard}/>
     }
 }

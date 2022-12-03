@@ -63,13 +63,13 @@ export class Gameboard
                 }
                 this.board[row][col] = new Tile({row, col}, type)
                 /** TODO: DELETE THIS JUST FOR TESTING */
-                switch(row)
-                {
-                    case 0: this.board[row][col].building = { type: BuildingType.Camp, campNumber: 1 }; break;
-                    case 1: this.board[row][col].building = { type: BuildingType.City, numSpires: 2 }; break;
-                    case 2: this.board[row][col].building = { type: BuildingType.Resource, resource: Resource.Gold }; break;
-                    case 3: this.board[row][col].building = { type: BuildingType.SkyTower, color: SkyTowerColors.Purple}; break;
-                }
+                // switch(row)
+                // {
+                //     case 0: this.board[row][col].building = { type: BuildingType.Camp, campNumber: 1 }; break;
+                //     case 1: this.board[row][col].building = { type: BuildingType.City, numSpires: 2 }; break;
+                //     case 2: this.board[row][col].building = { type: BuildingType.Resource, resource: Resource.Gold }; break;
+                //     case 3: this.board[row][col].building = { type: BuildingType.SkyTower, color: SkyTowerColors.Purple}; break;
+                // }
             }
         }
 

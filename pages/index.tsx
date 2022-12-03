@@ -3,9 +3,30 @@ import Image from 'next/image'
 import styles from '../styles/Home.module.css'
 import { Gameboard } from '../game/Gameboard'
 import { UIGameboard } from '../ui/UIGameboard'
+import { UIPlayerScreen } from '../ui/UIPlayerScreen'
+import { BunnyKingdomGame } from '../game/BunnykingdomGame'
+import { PlayerColors } from '../game/dictionaries/Colors'
+import { BuildingCard, TileCard } from '../game/Card'
+import { Building, BuildingType } from '../game/Building'
+import { Resource } from '../game/Resource'
 
 export default function Home() {
-  let gameboard: Gameboard = new Gameboard()
+  // let gameboard: Gameboard = new Gameboard()
+  let game: BunnyKingdomGame = new BunnyKingdomGame()
+  game.handleAddPlayer("Jay", PlayerColors.Pink)
+  let player = game.players[0]
+
+  let tileCard = new TileCard(6,3)
+  let resourceBuilding = {type: BuildingType.Resource, resource: Resource.Fish} as Building
+  let camp = {type: BuildingType.Camp, campNumber: 3} as Building
+
+  let building = camp
+  let buildingCard = new BuildingCard(building, "im jay")
+  player.hand.push(tileCard)
+  player.hand.push(buildingCard)
+  game.handleSelectCard(player.id, tileCard)
+  game.handleSelectCard(player.id, buildingCard)
+  game.handlePlayBuilding(player.id, building, {row:8, col: 3})
   return (
     <div className={styles.container}>
       <Head>
@@ -19,7 +40,7 @@ export default function Home() {
         <h1 className={styles.title}>
           Welcome to <a href="https://nextjs.org">Next.js!</a>
         </h1>
-        <UIGameboard board={gameboard} />
+        <UIPlayerScreen gameboard={game.gameboard} />
 
         <p className={styles.description}>
           Get started by editing{' '}

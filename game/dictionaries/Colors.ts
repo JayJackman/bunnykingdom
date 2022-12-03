@@ -42,6 +42,7 @@ export class TileColors
     static TextBackground: Color = Color.LightGray
 }
 
+export const CampColor = Color.LightGreen
 
 export class PlayerColors
 {
