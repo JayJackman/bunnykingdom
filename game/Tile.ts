@@ -1,34 +1,42 @@
 import { Position } from "./Utils"
 import { Resource } from "./Resource"
 import { Building, BuildingType } from "./Building"
+import { Color, PlayerColors } from "./dictionaries/Colors"
+import { Player } from "./Player"
 
 enum TileType
 {
-    Meadow,
-    Farm,
-    River,
-    Forest,
-    City,
-    Mountain
+    Meadow = "Meadow",
+    Farm = "Farm",
+    River = "River",
+    Forest = "Forest",
+    City = "City",
+    Mountain = "Mountain",
+}
+
+export function tileTypeToString(type: TileType): string
+{
+    return TileType[type]
 }
 
 class Tile
 {
-    readonly pos: Position
-    readonly type: TileType
-    readonly resource: Resource
-    building: Building
-    occupied: boolean = false /** TODO: replace this with a Player?: optional once the Player class is made */
-    lavaLeft?: boolean
-    lavaRight?: boolean
-    lavaTop?: boolean
-    lavaBottom?: boolean
+    readonly pos: Position                    /** The tile's position on the game board TODO: do we need this? */
+    readonly terrainType: TileType            /** The type of terrain on this tile */
+    readonly resource: Resource               /** The resource that this tile inherently produces */
+    building?: Building                       /** The building that is on the tile */
+    player?: Player                            /** The player that is on the tile */
+    lavaLeft?: boolean                        /** Whether or not lava borders on the left */
+    lavaRight?: boolean                       /** Whether or not lava borders on the right */
+    lavaTop?: boolean                         /** Whether or not lava borders on the top */
+    lavaBottom?: boolean                      /** Whether or not lava borders on the bottom */
 
     constructor(pos: Position, type: TileType)
     {
         this.pos = pos
-        this.type = type
+        this.terrainType = type
 
+        /** Add the default resources for the right tiles */
         switch (type)
         {
             case TileType.Farm:   this.resource = Resource.Carrot; break;
@@ -39,7 +47,6 @@ class Tile
 
         /** Only a City tile will have a building, in which case it will have a city with 1 spire */
         if (type === TileType.City) this.building = {type: BuildingType.City, numSpires: 1}
-        else                        this.building = {type: BuildingType.None}
     }
 
     /**
@@ -50,7 +57,7 @@ class Tile
      */
     resources(): [Resource, Resource]
     {
-        if (this.building.resource)
+        if (this.building && this.building.type === BuildingType.Resource)
         {
             return [this.resource, this.building.resource]
         }
@@ -64,7 +71,7 @@ class Tile
      */
     power(): number
     {
-        if (this.building.numSpires)
+        if (this.building && this.building.type === BuildingType.City)
         {
             return this.building.numSpires
         }
@@ -73,10 +80,10 @@ class Tile
 
     toString(): string
     {
-        return `(${this.pos.row}, ${this.pos.col}): ${TileType[this.type]}`
+        return `(${this.pos.row}, ${this.pos.col}): ${TileType[this.terrainType]}`
     }
 
 
 }
 
-export { TileType, Tile}
+export { TileType, Tile }

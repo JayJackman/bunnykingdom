@@ -1,17 +1,21 @@
 
-import { Card, ScrollCard, TileCard, BuildingCard, CardType } from './Card'
+import { Card, ScrollCard, TileCard, BuildingCard, CardType, ProvisionsCard } from './Card'
 import { getScrollCards } from './dictionaries/ScrollCards'
 import { Building, BuildingType } from './Building'
 import { Resource } from './Resource'
-import { Position } from './Utils'
+import { Position, shuffleArray } from './Utils'
+import { Color, SkyTowerColors } from './dictionaries/Colors'
+
+
+const NUM_CAMPS: number = 6
+const NUM_CITIES_1 = 20
+const NUM_CITIES_2 = 10
+const NUM_CITIES_3 = 3
+const NUM_PROVISONS = 2
 
 export class Deck
 {
     deck: Card[] = []
-    NUM_CAMPS: number = 6
-    NUM_CITIES_1 = 20
-    NUM_CITIES_2 = 10
-    NUM_CITIES_3 = 3
 
     constructor()
     {
@@ -24,15 +28,15 @@ export class Deck
         /** Make the Building cards */
 
         /** Camps */
-        for (let i = 0; i < this.NUM_CAMPS; i++)
+        for (let i = 0; i < NUM_CAMPS; i++)
         {
-            let camp: Building = {type: BuildingType.Camp, campNumber: i}
+            let camp: Building = { type: BuildingType.Camp, campNumber: i as 1| 2 |3 | 4 | 5 | 6 }
             let tooltip: string = "Place a camp token and one of your rabbits on an empty territory"
             this.deck.push( new BuildingCard(camp, tooltip) )
         }
 
         /** 1-spire cities */
-        for (let i = 0; i < this.NUM_CITIES_1; i++)
+        for (let i = 0; i < NUM_CITIES_1; i++)
         {
             let city: Building = { type: BuildingType.City, numSpires: 1}
             let tooltip: string = "Place a 1-spire City on one of your controlled territories"
@@ -40,7 +44,7 @@ export class Deck
         }
 
         /** 2-spire cities */
-        for (let i = 0; i < this.NUM_CITIES_1; i++)
+        for (let i = 0; i < NUM_CITIES_2; i++)
         {
             let city: Building = { type: BuildingType.City, numSpires: 2}
             let tooltip: string = "Place a 2-spire City on one of your controlled territories"
@@ -48,7 +52,7 @@ export class Deck
         }
 
         /** 3-spire cities */
-        for (let i = 0; i < this.NUM_CITIES_1; i++)
+        for (let i = 0; i < NUM_CITIES_3; i++)
         {
             let city: Building = { type: BuildingType.City, numSpires: 3}
             let tooltip: string = "Place a 3-spire City on one of your controlled mountain territories"
@@ -56,15 +60,15 @@ export class Deck
         }
 
         /** Sky Towers */
-        let skytower: Building = { type: BuildingType.SkyTower, color: "blue"}
+        let skytower: Building = { type: BuildingType.SkyTower, color: SkyTowerColors.Blue}
         let tooltip: string = "Place the blue Sky Tower buildings on two of your controlled territories in separate fiefs to connect them"
         this.deck.push( new BuildingCard(skytower, tooltip))
 
-        skytower.color = "black"
+        skytower.color = SkyTowerColors.Purple
         tooltip = "Place the black Sky Tower buildings on two of your controlled territories in separate fiefs to connect them"
         this.deck.push( new BuildingCard(skytower, tooltip))
 
-        skytower.color = "red"
+        skytower.color = SkyTowerColors.Red
         tooltip = "Place the red Sky Tower buildings on two of your controlled territories in separate fiefs to connect them"
         this.deck.push( new BuildingCard(skytower, tooltip))
 
@@ -126,5 +130,28 @@ export class Deck
                 this.deck.push( new TileCard(row, col))
             }
         }
+
+        /** Make the provisions cards */
+        for (let i = 0; i < NUM_PROVISONS; i++)
+        {
+            this.deck.push( new ProvisionsCard())
+        }
+    }
+
+    /**
+     * Shuffle the deck
+     */
+    shuffle(): void
+    {
+        shuffleArray<Card>(this.deck)
+    }
+
+    /**
+     * Deal the first num cards. Can optionally shuffle beforehand
+     */
+    deal(num: number, shuffle: boolean = false): Card[]
+    {
+        if (shuffle) this.shuffle()
+        return this.deck.splice(0, num)
     }
 }

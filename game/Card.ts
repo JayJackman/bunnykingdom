@@ -7,15 +7,18 @@ export enum CardType
     Tile,
     Building,
     Scroll,
+    Provisions,
 }
 
 export class Card
 {
+    name: string
     type: CardType
     tooltip: string
 
-    constructor(type: CardType, tooltip: string)
+    constructor(name: string, type: CardType, tooltip: string)
     {
+        this.name = name
         this.type = type
         this.tooltip = tooltip
     }
@@ -60,27 +63,24 @@ export class TileCard extends Card
 
     constructor(row: number, col: number)
     {
-        super(CardType.Tile, `This card allows you to place a bunny on tile (${row}, ${col}).`)
+        super(`${row}-${col}`, CardType.Tile, `This card allows you to place a bunny on tile (${row}, ${col}).`)
         this.pos = {row, col}
     }
 }
 
 export class BuildingCard extends Card
 {
-    name: string
     building: Building
 
     constructor(building: Building, tooltip: string)
     {
-        super(CardType.Building, tooltip)
+        super(buildingToString(building), CardType.Building, tooltip)
         this.building = building
-        this.name = buildingToString(building)
     }
 }
 
 export class ScrollCard extends Card
 {
-    name: string
     /**
      * TODO: Scroll cards need to provide a function that takes a game state and a player and returns an amount of points.
      * something like:
@@ -89,10 +89,14 @@ export class ScrollCard extends Card
 
     constructor(name: string, tooltip: string)
     {
-        super(CardType.Scroll, tooltip)
-        this.name = name
+        super(name, CardType.Scroll, tooltip)
     }
 }
 
-
-// export { TileCard, BuildingCard, ScrollCard }
+export class ProvisionsCard extends Card
+{
+    constructor()
+    {
+        super("Provisions", CardType.Provisions, "Immediately draw and play 2 cards")
+    }
+}

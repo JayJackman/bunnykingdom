@@ -2,14 +2,16 @@ import { Resource } from './Resource'
 import { Tile, TileType } from './Tile'
 import { Building, BuildingType } from './Building'
 import { Position } from './Utils'
+import { Color, SkyTowerColors } from './dictionaries/Colors'
+import { Player } from './Player'
 
 /**
  * Declare some constants here.
  * TODO: I would like to figureout how to add these to some sort of "defaults" class
  * */
-let height = 10
-let width = 10
-let boardLayout =
+const height = 10
+const width = 10
+const boardLayout =
 [
     ['f', 'f', 'f', 'c', 'r', 'r', 'r', 'f', 'p', 'r'],
     ['m', 'm', 'c', 'r', 'r', 'm', 'c', 'p', 'c', 'r'],
@@ -22,9 +24,9 @@ let boardLayout =
     ['c', 'p', 'p', 'r', 'r', 'p', 'm', 'm', 'c', 'f'],
     ['f', 'f', 'c', 'r', 'r', 's', 'm', 'm', 'r', 'r']
 ]
-let lavalFlows =
+const lavalFlows =
 [
-    [{row: 1, col: 0}, {row: 1, col: 0}],
+    [{row: 1, col: 0}, {row: 1, col: 1}],
     [{row: 1, col: 5}, {row: 2, col: 5}],
     [{row: 2, col: 7}, {row: 2, col: 8}],
     [{row: 2, col: 1}, {row: 3, col: 1}],
@@ -45,6 +47,7 @@ export class Gameboard
         let type: TileType
         for (let row = 0; row < height; row++)
         {
+            /** TODO: I don't like this but whatever */
             this.board[row] = Array<Tile>(10).fill(emptyTile())
             for (let col = 0; col < width; col++)
             {
@@ -59,12 +62,13 @@ export class Gameboard
                     default:  throw new Error(`Bad character in board layout: ${boardLayout[row][col]}`)
                 }
                 this.board[row][col] = new Tile({row, col}, type)
+                /** TODO: DELETE THIS JUST FOR TESTING */
                 switch(row)
                 {
                     case 0: this.board[row][col].building = { type: BuildingType.Camp, campNumber: 1 }; break;
                     case 1: this.board[row][col].building = { type: BuildingType.City, numSpires: 2 }; break;
-                    case 2: this.board[row][col].building = { type: BuildingType.Resource, resource: Resource.Mushroom }; break;
-                    case 3: this.board[row][col].building = { type: BuildingType.SkyTower, color: "red"}; break;
+                    case 2: this.board[row][col].building = { type: BuildingType.Resource, resource: Resource.Gold }; break;
+                    case 3: this.board[row][col].building = { type: BuildingType.SkyTower, color: SkyTowerColors.Purple}; break;
                 }
             }
         }
@@ -86,25 +90,34 @@ export class Gameboard
         }
     }
 
-    placeBuilding(building: Building, {row, col}: Position): boolean
+    placeBuilding(building: Building, {row, col}: Position): void
     {
-        if (this.board[row][col].building.type === BuildingType.None)
+        this.board[row][col].building = building
+    }
+
+    placeBunny({row, col}: Position, player: Player): void
+    {
+        let tile = this.board[row][col]
+        /** if someone was squatting on this hex, remove the camp*/
+        if (tile.building && tile.building.type === BuildingType.Camp)
         {
-            this.board[row][col].building = building
-            return true
+            tile.building = undefined
         }
-        return false
+        /** If there wasn't a camp and someone is already there, we can't place a bunny here */
+        else if (tile.player) throw new Error(`Can't play bunny on (${row}, ${col}) as it is occupied`)
+
+        /** Finally, set the playerId to the new player */
+        tile.player = player
     }
 }
 
-function emptyTile()
+function emptyTile(): Tile
 {
     return {
         pos: {row: 0, col: 0},
-        type: TileType.Meadow,
+        terrainType: TileType.Meadow,
         resource: Resource.Carrot,
-        building: {type: BuildingType.City},
-        occupied: false,
+        building: undefined,
 
         resources(): [Resource, Resource] {return [Resource.Carrot, Resource.Carrot]},
         power(): number { return 0 }
