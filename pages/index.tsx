@@ -63,9 +63,9 @@ export default function Home() {
 
 
 
-        <UIGame></UIGame>
-        {/* <UIPlayerScreen gameboard={game.gameboard} /> */}
-        {/* <UIHand hand={jay.hand}/> */}
+        {/* <UIGame></UIGame> */}
+        <UIPlayerScreen gameboard={game.gameboard} />
+        <UIHand hand={jay.hand}/>
         {/* <UICard card={tileCard1}></UICard>
         <UICard card={buildingCard1}></UICard> */}
 
