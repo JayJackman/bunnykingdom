@@ -16,7 +16,7 @@ export enum Color
     White = "#FFFFFF",
     Pink = "#FF00FF",
     SkyBlue = "#B2FFFF",
-    Purple = "#800080",
+    Purple = "#A000A0",
     RiverBlue = "#00BBFF",
     MeadowGreen = "#AEF359",
     LightGray = "#DDDDDD",

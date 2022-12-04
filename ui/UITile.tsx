@@ -198,14 +198,6 @@ export class UITile extends React.Component<TileProps, TileState>
       case BuildingType.SkyTower:
       {
         context.fillStyle = tile.building.color
-        context.fillRect(canvas.width/4, canvas.height/4, canvas.width/2, canvas.height/2)
-        context.lineWidth = 3
-        context.strokeRect(canvas.width/4, canvas.height/4, canvas.width/2, canvas.height/2)
-        break;
-      }
-      case BuildingType.Camp:
-      {
-        context.fillStyle = CampColor
         context.moveTo(10,50)
         context.lineTo(50,10)
         context.lineTo(90,50)
@@ -213,6 +205,16 @@ export class UITile extends React.Component<TileProps, TileState>
         context.closePath()
         context.stroke()
         context.fill()
+
+        break;
+      }
+      case BuildingType.Camp:
+      {
+        context.fillStyle = CampColor
+        context.fillRect(canvas.width/4, canvas.height/4, canvas.width/2, canvas.height/2)
+        context.lineWidth = 3
+        context.strokeRect(canvas.width/4, canvas.height/4, canvas.width/2, canvas.height/2)
+
         break;
       }
     }

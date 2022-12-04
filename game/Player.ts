@@ -17,6 +17,8 @@ export class Player
     playedCards: Card[] = []
     buildingCards: BuildingCard[] = []
     scrollCards: ScrollCard[] = []
+    discardedCards?: Card[]
+    drawPile?: Card[]
 
     constructor(name: string, color: PlayerColors)
     {
@@ -51,6 +53,25 @@ export class Player
             if (card.building.type === building.type) return true
         }
         return false
+    }
+
+    /** For two player game */
+    discardCard(card: Card): boolean
+    {
+        let index = this.indexOf(card)
+        if (index < 0) return false
+        if(!this.discardedCards) return false
+        this.discardedCards.concat(this.hand.splice(index,1))
+        return true
+    }
+
+    /** For two player game */
+    drawCard(num: number): boolean
+    {
+        if (!this.drawPile) return false
+        /** TODO: check for num too big? */
+        this.hand.concat(this.drawPile.splice(0,num))
+        return true
     }
 
     playCard(card: Card, fromProvisions: boolean = false): boolean

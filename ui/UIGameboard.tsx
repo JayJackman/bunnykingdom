@@ -1,4 +1,4 @@
-import { SimpleGrid, Flex, Heading } from '@chakra-ui/react'
+import { SimpleGrid, Flex, Heading, Tooltip } from '@chakra-ui/react'
 import { Gameboard } from "../game/Gameboard";
 import { UITile } from './UITile';
 
@@ -12,6 +12,7 @@ export function UIGameboard({board}: {board: Gameboard})
         {
           return row.map((_, colIndex) =>
           {
+
             return <UITile
             tile={board.board[rowIndex][colIndex]}
             key = { rowIndex + " " + colIndex }></UITile>

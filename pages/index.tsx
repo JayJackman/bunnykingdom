@@ -5,28 +5,48 @@ import { Gameboard } from '../game/Gameboard'
 import { UIGameboard } from '../ui/UIGameboard'
 import { UIPlayerScreen } from '../ui/UIPlayerScreen'
 import { BunnyKingdomGame } from '../game/BunnykingdomGame'
-import { PlayerColors } from '../game/dictionaries/Colors'
+import { PlayerColors, SkyTowerColors } from '../game/dictionaries/Colors'
 import { BuildingCard, TileCard } from '../game/Card'
 import { Building, BuildingType } from '../game/Building'
 import { Resource } from '../game/Resource'
+import { UICard } from '../ui/UICard'
+import { UIHand } from '../ui/UIHand'
+import { UIGame } from '../ui/Temp'
+
+let game: BunnyKingdomGame = new BunnyKingdomGame()
+game.handleAddPlayer("Jay", PlayerColors.White)
+game.handleAddPlayer("Rachel", PlayerColors.Pink)
+let jay = game.players[0]
+let rachel = game.players[1]
+game.handleStartGame()
+console.log(jay.hand)
+console.log(rachel.hand)
 
 export default function Home() {
   // let gameboard: Gameboard = new Gameboard()
-  let game: BunnyKingdomGame = new BunnyKingdomGame()
-  game.handleAddPlayer("Jay", PlayerColors.Pink)
-  let player = game.players[0]
 
-  let tileCard = new TileCard(6,3)
-  let resourceBuilding = {type: BuildingType.Resource, resource: Resource.Fish} as Building
-  let camp = {type: BuildingType.Camp, campNumber: 3} as Building
 
-  let building = camp
-  let buildingCard = new BuildingCard(building, "im jay")
-  player.hand.push(tileCard)
-  player.hand.push(buildingCard)
-  game.handleSelectCard(player.id, tileCard)
-  game.handleSelectCard(player.id, buildingCard)
-  game.handlePlayBuilding(player.id, building, {row:8, col: 3})
+  // let tileCard1 = new TileCard(6,3)
+  // let tileCard2 = new TileCard(8,9)
+  // let resourceBuilding = {type: BuildingType.Resource, resource: Resource.Fish} as Building
+  // let camp = {type: BuildingType.Camp, campNumber: 3} as Building
+  // let skytower = {type: BuildingType.SkyTower, color: SkyTowerColors.Purple} as Building
+
+  // let building1 = camp
+  // let building2 = skytower
+  // let buildingCard1 = new BuildingCard(building1, "im jay")
+  // let buildingCard2 = new BuildingCard(building2, "you are jay")
+  // player.hand.push(tileCard1)
+  // player.hand.push(tileCard2)
+  // player.hand.push(buildingCard1)
+  // player.hand.push(buildingCard2)
+  // game.handleSelectCard(player.id, tileCard1)
+  // game.handleSelectCard(player.id, tileCard2)
+  // game.handleSelectCard(player.id, buildingCard1)
+  // game.handleSelectCard(player.id, buildingCard2)
+  // game.handlePlayBuilding(player.id, building1, {row:8, col: 3})
+  // game.handlePlayBuilding(player.id, building2, {row:6, col:3}, {row:8, col:9})
+
   return (
     <div className={styles.container}>
       <Head>
@@ -40,7 +60,19 @@ export default function Home() {
         <h1 className={styles.title}>
           Welcome to <a href="https://nextjs.org">Next.js!</a>
         </h1>
-        <UIPlayerScreen gameboard={game.gameboard} />
+
+
+
+        <UIGame></UIGame>
+        {/* <UIPlayerScreen gameboard={game.gameboard} /> */}
+        {/* <UIHand hand={jay.hand}/> */}
+        {/* <UICard card={tileCard1}></UICard>
+        <UICard card={buildingCard1}></UICard> */}
+
+
+
+
+
 
         <p className={styles.description}>
           Get started by editing{' '}

@@ -24,46 +24,13 @@ export class Card
     }
 }
 
-// export interface Card
-// {
-//     type: CardType
-//     tooltip: string
-// }
-
-// export interface TileCard extends Card
-// {
-//     pos: Position
-// }
-
-// export interface BuildingCard extends Card
-// {
-//     name: string
-//     building: Building
-// }
-
-// export interface ScrollCard extends Card
-// {
-//     name: string
-//     /**
-//      * TODO: Scroll cards need to provide a function that takes a game state and a player and returns an amount of points.
-//      * something like:
-//      * scoringFunction: (state: gamestate, player: Player) = number
-//      * */
-// }
-
-// /** TODO: deal with this better somehow */
-// export interface ProvisionsCard extends Card
-// {
-//     name: string
-// }
-
 export class TileCard extends Card
 {
     pos: Position
 
     constructor(row: number, col: number)
     {
-        super(`${row}-${col}`, CardType.Tile, `This card allows you to place a bunny on tile (${row}, ${col}).`)
+        super(`Tile: ${row}-${col}`, CardType.Tile, `This card allows you to place a bunny on tile (${row}, ${col}).`)
         this.pos = {row, col}
     }
 }

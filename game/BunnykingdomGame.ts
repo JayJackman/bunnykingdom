@@ -10,24 +10,71 @@ import { Position } from "./Utils";
 
 const MAX_PLAYERS = 4
 const MIN_PLAYERS = 2
+const NUM_ROUNDS = 4
+const NUM_CARDS_FROM_PROVISIONS = 2
+const NUM_CARDS_TWO_PLAYERS = 10
+const NUM_CARDS_THREE_PLAYERS = 12
+const NUM_CARDS_FOUR_PLAYERS = 10
+const NUM_CARDS_PER_TURN = 2
+
+type PlayerId = number
 
 export class BunnyKingdomGame
 {
     gameboard: Gameboard = new Gameboard()
     players: Player[] = []
     deck: Deck = new Deck()
+    round: number = 0
+    numPlayers: number = 0
+    numCardsPlayed: Map<PlayerId, number> = new Map<PlayerId, number>()
+    numCardsDiscarded?: Map<PlayerId, number>
 
-    // setup()
-    // {
-    //     if (this.players.length < this.MIN_PLAYERS || this.players.length > this.MAX_PLAYERS)
-    //     {
-    //         throw new Error(`Bad number of players: ${this.players.length}`)
-    //     }
+    /**
+     * Handle a start game command. Here, we shuffle the deck and deal cards to each player
+     * TODO: add logic for 2 player games
+     */
+    handleStartGame()
+    {
+        if (this.numPlayers < MIN_PLAYERS || this.numPlayers > MAX_PLAYERS)
+        {
+            throw new Error(`Bad number of players: ${this.numPlayers}`)
+        }
 
-    //     this.deck.shuffle()
+        /** In a 2 player game we need to keep track of how many cards have been discarded per turn */
+        if (this.numPlayers === 2)
+        {
+            this.numCardsDiscarded = new Map<PlayerId, number>()
+            for (let player of this.players)
+            {
+                this.numCardsDiscarded.set(player.id, 0)
+            }
+        }
 
-    //     /** Deal the appropriate number of cards out */
-    // }
+        this.deck.shuffle()
+        this.deal()
+
+        this.round++
+    }
+
+    /**
+     * Deal the appropriate amount of cards to each player to start a new round
+     */
+    private deal()
+    {
+        let numCards: number = 0
+        if (this.numPlayers === 2) numCards = NUM_CARDS_TWO_PLAYERS
+        else if (this.numPlayers === 3) numCards = NUM_CARDS_THREE_PLAYERS
+        else if (this.numPlayers === 4) numCards = NUM_CARDS_FOUR_PLAYERS
+
+        for (let player of this.players)
+        {
+            player.hand = this.deck.deal(numCards)
+            if (this.numPlayers === 2)
+            {
+                player.drawPile = this.deck.deal(numCards)
+            }
+        }
+    }
 
     /**
      * Handle a command to add a new player to the game
@@ -36,9 +83,26 @@ export class BunnyKingdomGame
      */
     handleAddPlayer(name: string, color: PlayerColors)
     {
-        /** TODO: Check to make sure the game hasnt started yet */
-        if (this.players.length > MAX_PLAYERS) throw new Error("Adding too many players!")
-        this.players.push(new Player(name, color))
+        if (this.round > 0) throw new Error("Can't add players after game has started")
+        if (this.numPlayers > MAX_PLAYERS) throw new Error("Adding too many players!")
+        let player = new Player(name, color)
+        this.players.push(player)
+        this.numCardsPlayed.set(player.id, 0)
+        this.numPlayers++
+    }
+
+    /**
+     * (Only for 2 player game) Handle a discard card event from a player
+     * @param id The unique ID of the player discarding the card
+     * @param card A Card object indicating the card being played
+     */
+    handleDiscardCard(id: number, card: Card)
+    {
+        let player = this.getPlayerById(id)
+        if (!player.hasCardInHand(card)) throw new Error(`${player.name} tried to discard a card they don't have`)
+        if(!player.discardCard(card)) throw new Error (`${player.name} failed to discard a card`)
+        let numCards = this.numCardsDiscarded?.get(player.id) as number
+        this.numCardsDiscarded?.set(player.id, numCards + 1)
     }
 
     /**
@@ -69,11 +133,17 @@ export class BunnyKingdomGame
         }
         else if (card instanceof ProvisionsCard)
         {
-            /** TODO: add a global constant for number of cards to deal from provisions */
-            for (let c of this.deck.deal(2))
+            for (let c of this.deck.deal(NUM_CARDS_FROM_PROVISIONS))
             {
                 this.handleSelectCard(id, c, true)
             }
+        }
+
+        /** Update the number of cards played and check to see if we are ready to go to the next turn */
+        if (!fromProvisions)
+        {
+            let numPlayed = this.numCardsPlayed.get(player.id) as number
+            this.numCardsPlayed.set(player.id, numPlayed + 1)
         }
     }
 
@@ -91,10 +161,12 @@ export class BunnyKingdomGame
         let tile = this.gameboard.board[row][col]
 
         /** Check to make sure that the player selected a valid building to prevent cheating */
-        if (!player.hasBuildingAvailable(building)) throw new Error(`${player.name} tried to play a building they don't have`)
+        if (!player.hasBuildingAvailable(building))
+            throw new Error(`${player.name} tried to play a building they don't have`)
 
         /** Make sure there isn't already a building on the tile */
-        if (tile.building) throw new Error (`${player.name} tried to play a building on territory that already had a building (${row}, ${col})`)
+        if (tile.building)
+            throw new Error (`${player.name} tried to play a building on territory that already had a building (${row}, ${col})`)
 
         /** If the building is a camp, we actually want to check to make sure there ISN'T a bunny there (other buildings need a bunny) */
         if (building.type === BuildingType.Camp)
@@ -126,9 +198,10 @@ export class BunnyKingdomGame
         /** Do an extra check for Sky Tower's second position */
         if (building.type == BuildingType.SkyTower)
         {
-
             if (!pos2) throw new Error(`Pos2 for Sky Tower is undefined`)
             let tile2 = this.gameboard.board[pos2.row][pos2.col]
+            /** Make sure there isn't already a building on the tile */
+            if (tile2.building) throw new Error (`${player.name} tried to play a building on territory that already had a building (${row}, ${col})`)
             if (!tile2.player) throw new Error (`${player.name} tried to play a building on an unoccupied territory (${row}, ${col})`)
             else if (tile2.player.id !== id) throw new Error (`${player.name} tried to play a building on someone else's territory (${row}, ${col})`)
 
